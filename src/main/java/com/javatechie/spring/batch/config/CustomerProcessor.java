@@ -8,4 +8,13 @@ public class CustomerProcessor implements ItemProcessor<Customer, Customer> {
     public Customer process(Customer customer) throws Exception {
         return customer;
     }
+
+//    @Override
+//    public Customer process(Customer customer) throws Exception {
+//        if (customer.getCountry().equals("Indonesia")){
+//            return customer;
+//        }else {
+//            return null;
+//        }
+//    }
 }

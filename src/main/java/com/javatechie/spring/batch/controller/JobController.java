@@ -24,6 +24,7 @@ public class JobController {
     @Autowired
     private Job job;
 
+    //End point that created to trigeer the job manually
     @PostMapping("/importCustomers")
     public void importCSVtoDBjob(){
         JobParameters jobParameters = new JobParametersBuilder().addLong("startA",System.currentTimeMillis()).toJobParameters();
