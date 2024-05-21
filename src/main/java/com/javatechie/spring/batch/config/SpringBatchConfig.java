@@ -49,7 +49,7 @@ public class SpringBatchConfig {
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
         lineTokenizer.setDelimiter(",");
         lineTokenizer.setStrict(false);
-        lineTokenizer.setNames("id","firstName","lastName","email","gender","contactNo","country","dob");
+        lineTokenizer.setNames("id","firstName","lastName","email","gender","contactNo","country","dob", "age");
 
         BeanWrapperFieldSetMapper<Customer> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
         fieldSetMapper.setTargetType(Customer.class);
@@ -96,6 +96,10 @@ public class SpringBatchConfig {
                 .reader(reader())
                 .processor(processor())
                 .writer(customerWriter)
+                .faultTolerant()
+                .skipLimit(100)
+                .skip(NumberFormatException.class)
+//                .noSkip(IllegalArgumentException.class)
                 .build();
         return step;
 //        return new StepBuilder("slaveStep", jobRepository)
@@ -108,7 +112,7 @@ public class SpringBatchConfig {
     }
 
     @Bean
-    public Step masterStep(JobRepository jobRepository, PlatformTransactionManager transactionManager, Partitioner partitioner) {
+    public Step masterStep(JobRepository jobRepository, PlatformTransactionManager transactionManager, Partitioner partitioner) throws Exception{
 
         Step step = new StepBuilder("masterStep", jobRepository)
                 .partitioner(slaveStep(jobRepository,transactionManager))
@@ -124,7 +128,7 @@ public class SpringBatchConfig {
     }
 
     @Bean
-    public Job runJob(JobRepository jobRepository, PlatformTransactionManager transactionManager, Partitioner partitioner){
+    public Job runJob(JobRepository jobRepository, PlatformTransactionManager transactionManager, Partitioner partitioner) throws Exception {
         return new JobBuilder("importUserJob", jobRepository).flow(masterStep(jobRepository, transactionManager, partitioner)).end().build();
 //        return job
 

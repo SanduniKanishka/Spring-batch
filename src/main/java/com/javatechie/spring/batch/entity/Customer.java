@@ -37,4 +37,7 @@ public class Customer {
     @Column(name = "DOB")
     private String dob;
 
+    @Column(name = "Age")
+    private String age;
+
 }
