@@ -1,11 +1,13 @@
 package com.javatechie.spring.batch.config;
 
 import com.javatechie.spring.batch.entity.Customer;
+import com.javatechie.spring.batch.listener.StepSkipListener;
 import com.javatechie.spring.batch.partition.ColumnRangePartition;
 import com.javatechie.spring.batch.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.partition.PartitionHandler;
@@ -101,6 +103,7 @@ public class SpringBatchConfig {
 //                .skipLimit(100)
 //                .skip(NumberFormatException.class)
 //                .noSkip(IllegalArgumentException.class)
+                .listener(skipListener())
                 .skipPolicy(skipPolicy())
                 .build();
         return step;
@@ -139,6 +142,11 @@ public class SpringBatchConfig {
     @Bean
     public SkipPolicy skipPolicy(){
         return new ExceptionSkipPolicy();
+    }
+
+    @Bean
+    public SkipListener skipListener(){
+        return new StepSkipListener();
     }
     //Execute the job concurrently
     @Bean
